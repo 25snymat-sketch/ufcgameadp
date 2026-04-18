@@ -179,7 +179,7 @@
   <script>
     // --- AUDIO ---
     const punchSound = new Audio("punch1.wav"); 
-    punchSound.volume = 5.5;
+    punchSound.volume = 0.99;
     punchSound.preload = "auto";
 
     let fighterPay = 0;
@@ -207,7 +207,7 @@
     fighterImg.onclick = function() {
       // Sound logic
       const clickSound = punchSound.cloneNode();
-      clickSound.volume = 5.5;
+      clickSound.volume = 0.99;
       clickSound.play().catch(() => {});
 
       // Game logic
@@ -265,7 +265,7 @@
       if (fighterPay >= 5000 && fighterPay < 6000) {
         message.innerText = "The coach says you're looking sharp!";
       } else if (fighterPay >= 25000 && fighterPay < 27000) {
-        message.innerText = "The CEO says you're a 'real fighter'. (No raise though).";
+        message.innerText = "The CEO Wana Dhite says you're a 'real fighter'. (No raise though).";
       }
     }
   </script>
