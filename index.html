@@ -2,22 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>UFC Pay Sim</title>
     
     <style>
-      html, body { height: 100%; margin: 0; padding: 0; }
+      /* Fixes the 'user-select' warning and sets up layout */
+      * {
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none;     /* IE 10+ */
+        user-select: none;         /* Standard syntax */
+        box-sizing: border-box;
+      }
+
+      html, body { 
+        height: 100%; 
+        margin: 0; 
+        padding: 0; 
+        background-color: #1a1a1a; /* Fallback color */
+      }
 
       body {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center; 
-        overflow: hidden;
-        /* Corrected background logic */
-        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                    url('ufcoctagon.jpeg') no-repeat center center fixed;
+        
+        /* Updated Background - TRY CHANGING .jpg TO .jpeg HERE IF IT FAILS */
+        background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                          url('ufcoctagon.jpg');
         background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        
         color: white;
         font-family: 'Arial Black', sans-serif;
       }
@@ -26,7 +42,7 @@
         background: rgba(0, 0, 0, 0.9);
         padding: 20px;
         border-radius: 15px;
-        border: 3px solid #d20a0a; /* UFC Red */
+        border: 3px solid #d20a0a;
         width: 90%;
         max-width: 400px;
         text-align: center;
@@ -35,19 +51,15 @@
       }
 
       #fighterPay { font-size: 3rem; margin: 10px 0; color: #00ff88; }
-      #tierName { color: #fff; text-transform: uppercase; letter-spacing: 2px; }
 
       #fighter {
-        max-width: 280px;
+        max-width: 250px;
         height: auto;
         cursor: pointer;
         transition: transform 0.05s;
-        filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
       }
 
-      #fighter:active { transform: scale(0.92); }
-      
-      #message { font-size: 1rem; color: #ffeb3b; min-height: 1.2em; }
+      #fighter:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
@@ -55,7 +67,7 @@
   <div class="game-box">
     <h2 id="tierName">AMATEUR TIER</h2>
     <h1 id="fighterPay">$0</h1>
-    <p id="message">Click the bag to start your career!</p>
+    <p id="message">Click the bag to train!</p>
   </div>
 
   <div id="fighter-container">
@@ -63,11 +75,9 @@
   </div>
 
   <script>
-    // --- AUDIO ---
     const punchSound = new Audio("punch1.wav"); 
     punchSound.volume = 0.5;
 
-    // --- GAME DATA ---
     let fighterPay = 0;
     let currentTierIndex = 0;
     let payAmount = 500;
@@ -87,36 +97,23 @@
     const message = document.getElementById("message");
 
     fighterImg.onclick = function() {
-      // 1. Play Sound
+      // Audio
       const clickSound = punchSound.cloneNode();
-      clickSound.volume = 0.5;
       clickSound.play().catch(() => {});
 
-      // 2. Add Money
+      // Logic
       fighterPay += payAmount;
       payDisplay.innerText = "$" + fighterPay.toLocaleString();
 
-      // 3. Check for Rank Up
-      checkTierUpgrade();
-    };
-
-    function checkTierUpgrade() {
+      // Check for Promotion
       let nextTier = tiers[currentTierIndex + 1];
-      
       if (nextTier && fighterPay >= nextTier.threshold) {
         currentTierIndex++;
         payAmount += tiers[currentTierIndex].bonus;
-        
         tierDisplay.innerText = tiers[currentTierIndex].name + " TIER";
-        message.innerText = "PROMOTED! You are now a " + tiers[currentTierIndex].name + "!";
-        
-        // Visual flash for promotion
-        document.querySelector('.game-box').style.borderColor = "#00ff88";
-        setTimeout(() => {
-          document.querySelector('.game-box').style.borderColor = "#d20a0a";
-        }, 500);
+        message.innerText = "PROMOTED TO " + tiers[currentTierIndex].name + "!";
       }
-    }
+    };
   </script>
 </body>
 </html>
