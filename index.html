@@ -1,32 +1,101 @@
-<style>
-  body {
-    /* Updated to match your exact filename in GitHub */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                      url('ufcoctagon.jpeg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    /* ... rest of your body styles ... */
-  }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
+    <title>UFC Pay Sim</title>
+    
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        /* FIX 2: Ensures the game stays within the laptop window */
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow-x: hidden; /* Stops side-scrolling */
 
-<div id="fighter-container">
-  <img id="fighter" src="ufcbag.gif" alt="fighter">
-</div>
+        background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                          url('ufcoctagon.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: white;
+        font-family: sans-serif;
+      }
 
-<script>
-  // Use the local name since it's in the same folder on GitHub
-  const punchSound = new Audio("punch1.wav"); 
-  punchSound.volume = 0.5;
+      #fighter-container {
+        /* FIX 3: Limits the size of the image area so it doesn't cause zoom */
+        max-width: 90%;
+        text-align: center;
+      }
 
-  const fighterImg = document.getElementById("fighter");
-  
-  fighterImg.onclick = function() {
-    // Sound play logic
-    const clickSound = punchSound.cloneNode();
-    clickSound.volume = 0.5;
-    clickSound.play();
+      #fighter {
+        /* FIX 4: Makes the bag responsive */
+        max-width: 100%;
+        max-height: 50vh; /* Bag won't take up more than half the screen height */
+        height: auto;
+        cursor: pointer;
+        transition: transform 0.1s;
+      }
 
-    // ... rest of your game logic ...
-  };
-</script>
+      #fighter:active {
+        transform: scale(0.95); /* Little "punch" effect when clicked */
+      }
+
+      /* Example of a responsive box for your stats */
+      .game-box {
+        background: rgba(0, 0, 0, 0.8);
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        text-align: center;
+        margin-top: 20px;
+      }
+    </style>
+</head>
+<body>
+
+  <div class="game-box">
+    <h2 id="tierName">AMATEUR TIER</h2>
+    <h1 id="fighterPay">$0</h1>
+    <p id="message">Keep training!</p>
+  </div>
+
+  <div id="fighter-container">
+    <img id="fighter" src="ufcbag.gif" alt="fighter">
+  </div>
+
+  <script>
+    // Audio Setup
+    const punchSound = new Audio("punch1.wav"); 
+    punchSound.volume = 0.5;
+
+    // State Variables (Ensure these match your logic)
+    let fighterPay = 0;
+    let payAmount = 500;
+
+    const fighterImg = document.getElementById("fighter");
+    const payDisplay = document.getElementById("fighterPay");
+
+    fighterImg.onclick = function() {
+      // 1. Sound play logic (Rapid Fire Fix)
+      const clickSound = punchSound.cloneNode();
+      clickSound.volume = 0.5;
+      clickSound.play().catch(e => console.log("Audio waiting for first click"));
+
+      // 2. Game Logic
+      fighterPay += payAmount;
+      if(payDisplay) {
+        payDisplay.innerText = "$" + fighterPay.toLocaleString();
+      }
+
+      // Add your checkTierUpgrade() and other functions here!
+    };
+  </script>
+</body>
+</html>
