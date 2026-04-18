@@ -179,7 +179,7 @@
   <script>
     // --- AUDIO ---
     const punchSound = new Audio("punch1.wav"); 
-    punchSound.volume = 1.0;
+    punchSound.volume = 5.5;
     punchSound.preload = "auto";
 
     let fighterPay = 0;
@@ -207,7 +207,7 @@
     fighterImg.onclick = function() {
       // Sound logic
       const clickSound = punchSound.cloneNode();
-      clickSound.volume = 0.5;
+      clickSound.volume = 5.5;
       clickSound.play().catch(() => {});
 
       // Game logic
