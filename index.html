@@ -1,46 +1,304 @@
-function updateMessages() {
-  // Fix: Ensure variable names match (fighterPay vs fighterpay)
-  // Fix: Added missing closing braces } before each 'else if'
-  
-  if (fighterPay >= 5000 && fighterPay < 6000) {
-    message.innerText = "The coach says you're looking sharp!";
-  } else if (fighterPay >= 25000 && fighterPay < 27000) {
-    message.innerText = "The CEO Wana Dhite says you're a 'real fighter' after you pull a massive upset. (No raise though).";
-  } else if (fighterPay >= 35000 && fighterPay < 40000) {
-    message.innerText = "Keep climbing the ranks and you'll surely get your first million...";
-  } else if (fighterPay >= 55000 && fighterPay < 67000) {
-    message.innerText = "You feel like you tore something during training, but you decide to forge on";
-  } else if (fighterPay >= 79000 && fighterPay < 91000) {
-    message.innerText = "You love what you do, but it feels like everything you do has to be work-related.";
-  } else if (fighterPay >= 99000 && fighterPay < 105000) {
-    message.innerText = "Ouch - you suffered your first loss. That can't be good for the bills...";
-  } else if (fighterPay >= 117000 && fighterPay < 124000) {
-    message.innerText = "You find out about an ongoing lawsuit. Maybe it's not too late to switch to One Championship...";
-  } else if (fighterPay >= 132000 && fighterPay < 138000) {
-    message.innerText = "You're still a rising talent, but you can feel the weariness growing.";
-  } else if (fighterPay >= 152000 && fighterPay < 170000) {
-    message.innerText = "You have yet to receive a significantly better contract. Hopefully that changes soon...";
-  } else if (fighterPay >= 184000 && fighterPay < 190000) {
-    message.innerText = "You start to wonder deep down if this fighting thing is worth it all...";
-  } else if (fighterPay >= 203000 && fighterPay < 209500) {
-    message.innerText = "It feels great to be recognized, but even the bonuses don't feel that helpful.";
-  } else if (fighterPay >= 220000 && fighterPay < 229500) {
-    message.innerText = "The chatter around your occasional losses is starting to get amplified.";
-  } else if (fighterPay >= 247000 && fighterPay < 256000) {
-    message.innerText = "Major brand deal offered! You accept without hesitation (or reading the fine print).";
-  } else if (fighterPay >= 287500 && fighterPay < 297000) {
-    message.innerText = "You tore your ACL. Worst pain ever. You're on medical leave for 9 months.";
-  } else if (fighterPay >= 350000 && fighterPay < 361500) {
-    message.innerText = "9 months later, you're back. Surgery was a success; the journey continues.";
-  } else if (fighterPay >= 400000 && fighterPay < 422000) {
-    message.innerText = "Two incredible bouts since your return. Wana's definitely taking notice.";
-  } else if (fighterPay >= 434500 && fighterPay < 445000) {
-    message.innerText = "Jumping spots in the division, but unhappy with your brand partners.";
-  } else if (fighterPay >= 503500 && fighterPay < 560000) {
-    message.innerText = "You beat #3 in your division. Your discipline is stronger than ever.";
-  } else if (fighterPay >= 750000 && fighterPay < 800000) {
-    message.innerText = "Wana Dhite announced it: 6 months from now, you fight for the belt.";
-  } else if (fighterPay >= 999999 && fighterPay < 1000000) {
-    message.innerText = "You did it - you won! Unfortunately, the injuries finally caught up to you...";
-  }
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
+  <title>UFC Fighter Pay Clicker - Pro Version</title>
+  <style>
+    /* --- LAYOUT FIXES --- */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                  url('ufcoctagon.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px;'><text y='24'>🥊</text></svg>") 16 16, auto;
+    }
+
+    body:active {
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:28px;'><text y='24'>💥</text></svg>") 16 16, auto;
+    }
+
+    /* --- UI STYLING --- */
+    h1 { 
+      margin: 0 0 5px 0; 
+      font-size: 22px;
+      color: #ff4d4d; 
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .instruction {
+      font-size: 12px;
+      color: #aaa;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    #fighter-container {
+      height: 160px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    #fighter {
+      width: 130px;
+      cursor: inherit;
+      transition: transform 0.05s;
+    }
+
+    #fighter:active {
+      transform: scale(1.1);
+      filter: brightness(1.3);
+    }
+
+    .box {
+      margin: 5px auto;
+      padding: 10px;
+      width: 320px;
+      border-radius: 10px;
+      background: rgba(20, 20, 20, 0.9);
+      border: 1px solid #444;
+      backdrop-filter: blur(8px); 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .progress-container {
+      width: 100%;
+      background-color: #111;
+      border-radius: 10px;
+      margin: 8px 0;
+      height: 10px;
+      border: 1px solid #555;
+      overflow: hidden;
+    }
+
+    #progressBar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #00ff88, #00ccff);
+      transition: width 0.2s ease-in-out;
+    }
+
+    .big { font-size: 24px; font-weight: bold; color: #00ff88; margin: 5px 0; }
+    .revenue { color: #888; font-size: 13px; margin: 2px 0; }
+    .strike-val { color: #ffcc00; font-size: 11px; font-weight: bold; }
+
+    #message {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #ff4d4d;
+      font-weight: bold;
+      min-height: 3em;
+      width: 320px;
+      text-align: center;
+    }
+
+    #retireBtn {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #endingOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: black;
+      z-index: 999;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+    }
+
+    #endingImg {
+      max-width: 70%;
+      max-height: 50vh;
+      border: 2px solid #333;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-content">
+    <h1>💰 UFC PAY SIMULATOR 💰</h1>
+    <div class="instruction">Punch the bag to earn!</div>
+    
+    <div id="fighter-container">
+      <img id="fighter" src="ufcbag.gif" alt="fighter">
+    </div>
+
+    <div class="box">
+      <div style="text-transform: uppercase; font-size: 10px; letter-spacing: 2px; color: #aaa;" id="tierName">AMATEUR TIER</div>
+      <p class="big" id="fighterPay">$0</p>
+      <div class="strike-val">Per Strike: <span id="payPerClick">$500</span></div>
+      
+      <div class="progress-container">
+          <div id="progressBar"></div>
+      </div>
+      <div id="nextTierInfo" style="font-size: 11px; color: #00ccff;">Goal: $25,000</div>
+    </div>
+
+    <div class="box">
+      <p class="revenue">Event Revenue: $5,000,000</p>
+    </div>
+
+    <div id="message">Click the bag to start training...</div>
+    <button id="retireBtn" onclick="showEnding()">Rest</button>
+  </div>
+
+  <div id="endingOverlay">
+    <img id="endingImg" src="injured.png" alt="The damage is done">
+    <p style="font-style: italic; color: #aaa; margin-bottom: 20px;">"I don't remember when it got this bad..."</p>
+    <button onclick="resetGame()" style="padding:12px 25px; background:transparent; color:#ff4d4d; border:2px solid #ff4d4d; cursor:pointer;">Retire and Start Over?</button>
+  </div>
+
+  <script>
+    // --- AUDIO ---
+    const punchSound = new Audio("punch1.wav"); 
+    punchSound.volume = 0.99;
+    punchSound.preload = "auto";
+
+    let fighterPay = 0;
+    let currentTierIndex = 0;
+    let payAmount = 500;
+
+    const tiers = [
+      { name: "Amateur", threshold: 0, bonus: 0 },
+      { name: "Prospect", threshold: 25000, bonus: 0 },
+      { name: "Main Card", threshold: 75000, bonus: 0 },
+      { name: "Ranked", threshold: 200000, bonus: 500 },
+      { name: "Top Contender", threshold: 500000, bonus: 1500 },
+      { name: "Champion", threshold: 1000000, bonus: 2500 }
+    ];
+
+    const fighterImg = document.getElementById("fighter");
+    const payDisplay = document.getElementById("fighterPay");
+    const tierDisplay = document.getElementById("tierName");
+    const message = document.getElementById("message");
+    const progressBar = document.getElementById("progressBar");
+    const nextTierInfo = document.getElementById("nextTierInfo");
+    const payPerClickDisplay = document.getElementById("payPerClick");
+    const retireBtn = document.getElementById("retireBtn");
+
+    fighterImg.onclick = function() {
+      // Sound logic
+      const clickSound = punchSound.cloneNode();
+      clickSound.volume = 0.99;
+      clickSound.play().catch(() => {});
+
+      // Game logic
+      fighterPay += payAmount;
+      payDisplay.innerText = "$" + fighterPay.toLocaleString();
+
+      checkTierUpgrade();
+      updateProgressBar();
+      updateMessages();
+    };
+
+    function checkTierUpgrade() {
+      let nextTier = tiers[currentTierIndex + 1];
+      if (nextTier && fighterPay >= nextTier.threshold) {
+        currentTierIndex++;
+        payAmount += tiers[currentTierIndex].bonus;
+        payPerClickDisplay.innerText = "$" + payAmount.toLocaleString();
+        tierDisplay.innerText = tiers[currentTierIndex].name.toUpperCase() + " TIER";
+        
+        if (tiers[currentTierIndex].name === "Champion") {
+            message.innerText = "You seem pretty beat up... I think you should rest.";
+            retireBtn.style.display = "inline-block";
+        } else {
+            message.innerText = "PROMOTED! You reached " + tiers[currentTierIndex].name + " status!";
+        }
+      }
+    }
+
+    function updateProgressBar() {
+      const currentTier = tiers[currentTierIndex];
+      const nextTier = tiers[currentTierIndex + 1];
+      if (nextTier) {
+        const range = nextTier.threshold - currentTier.threshold;
+        const earnedInRange = fighterPay - currentTier.threshold;
+        const percent = Math.min((earnedInRange / range) * 100, 100);
+        progressBar.style.width = percent + "%";
+        nextTierInfo.innerText = "Goal: $" + nextTier.threshold.toLocaleString();
+      } else {
+        progressBar.style.width = "100%";
+        progressBar.style.background = "linear-gradient(90deg, #ffd700, #ff8c00)";
+        nextTierInfo.innerText = "🏆 MAX TIER REACHED 🏆";
+      }
+    }
+
+    function showEnding() {
+        document.getElementById("game-content").style.display = "none";
+        document.getElementById("endingOverlay").style.display = "flex";
+    }
+
+    function resetGame() {
+        location.reload(); 
+    }
+
+    function updateMessages() {
+      if (fighterPay >= 5000 && fighterPay < 6000) {
+        message.innerText = "The coach says you're looking sharp!";
+      } else if (fighterPay >= 25000 && fighterPay < 27000) {
+        message.innerText = "The CEO Wana Dhite says you're a 'real fighter' after you pull a massive upset. (No raise though).";
+      } else if (fighterPay >= 35000 && fighterPay < 40000) {
+        message.innerText = "Keep climbing the ranks and you'll surely get your first million...";
+      } else if (fighterPay >= 55000 && fighterPay < 67000) {
+        message.innerText = "You feel like you tore something during training, but you decide to forge on";
+      } else if (fighterPay >= 79000 && fighterPay < 91000) {
+        message.innerText = "You love what you do, but it feels like everything has to be work-related.";
+      } else if (fighterPay >= 99000 && fighterPay < 105000) {
+        message.innerText = "Ouch - you suffered your first loss. That can't be good for the bills...";
+      } else if (fighterPay >= 117000 && fighterPay < 124000) {
+        message.innerText = "You find out about a lawsuit. Maybe it's not too late to switch to One Championship...";
+      } else if (fighterPay >= 132000 && fighterPay < 138000) {
+        message.innerText = "You're a rising talent, but you can feel the weariness growing.";
+      } else if (fighterPay >= 152000 && fighterPay < 170000) {
+        message.innerText = "You have yet to receive a better contract. Hopefully that changes soon...";
+      } else if (fighterPay >= 184000 && fighterPay < 190000) {
+        message.innerText = "You start to wonder deep down if this fighting thing is worth it all...";
+      } else if (fighterPay >= 203000 && fighterPay < 209500) {
+        message.innerText = "Bonuses don't feel that helpful when the medical bills start piling up.";
+      } else if (fighterPay >= 247000 && fighterPay < 256000) {
+        message.innerText = "Major brand deal! You accept without hesitation (you didn't read the fine print).";
+      } else if (fighterPay >= 287500 && fighterPay < 297000) {
+        message.innerText = "You tore your ACL. Worst pain ever. You're out for 9 months.";
+      } else if (fighterPay >= 350000 && fighterPay < 361500) {
+        message.innerText = "9 months later, you're back. Determined to finish your journey.";
+      } else if (fighterPay >= 400000 && fighterPay < 422000) {
+        message.innerText = "You've had two incredible bouts. Wana's taking notice.";
+      } else if (fighterPay >= 503500 && fighterPay < 560000) {
+        message.innerText = "You beat #3 in your division. Your resolve is strengthening.";
+      } else if (fighterPay >= 750000 && fighterPay < 800000) {
+        message.innerText = "The call came: In 6 months, you fight for the belt. You train vigorously.";
+      } else if (fighterPay >= 999999 && fighterPay < 1000000) {
+        message.innerText = "You did it! But years of stress and injuries have finally caught up...";
+      }
+    }
+  </script>
+</body>
+</html>
