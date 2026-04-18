@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UFC Fighter Pay Clicker - Pro Version</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      color: white;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      user-select: none;
+      background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://static.toiimg.com/thumb/msid-124726738,imgsize-1142458,width-400,resizemode-4/ufc-octagon-shaped-cage.jpg'); 
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px;'><text y='24'>🥊</text></svg>") 16 16, auto;
+    }
+
+    body:active {
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:28px;'><text y='24'>💥</text></svg>") 16 16, auto;
+    }
+
+    h1 { 
+      margin: 10px 0 5px 0; 
+      font-size: 24px;
+      color: #ff4d4d; 
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    /* Styling for the new instruction prompt */
+    .instruction {
+      font-size: 14px;
+      color: #aaa;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    #fighter-container {
+      height: 180px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    #fighter {
+      width: 140px;
+      cursor: inherit;
+      transition: transform 0.05s;
+    }
+
+    #fighter:active {
+      transform: scale(1.1);
+      filter: brightness(1.3);
+    }
+
+    .box {
+      margin: 5px auto;
+      padding: 10px;
+      width: 300px;
+      border-radius: 10px;
+      background: rgba(34, 34, 34, 0.85);
+      border: 1px solid #444;
+      backdrop-filter: blur(8px); 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .progress-container {
+      width: 280px;
+      background-color: #111;
+      border-radius: 10px;
+      margin: 8px auto;
+      height: 12px;
+      border: 1px solid #555;
+      overflow: hidden;
+    }
+
+    #progressBar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #00ff88, #00ccff);
+      transition: width 0.2s ease-in-out;
+    }
+
+    .big { font-size: 22px; font-weight: bold; color: #00ff88; margin: 5px 0; }
+    .revenue { color: #888; font-size: 14px; margin: 2px 0; }
+    .strike-val { color: #ffcc00; font-size: 12px; font-weight: bold; margin-bottom: 5px; }
+
+    #message {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #ff4d4d;
+      font-weight: bold;
+      min-height: 1.5em;
+    }
+
+    #retireBtn {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #retireBtn:hover { background-color: #cc0000; }
+
+    #endingOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: black;
+      z-index: 999;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #endingImg {
+      max-width: 80%;
+      max-height: 60vh;
+      border: 2px solid #333;
+      margin-bottom: 20px;
+    }
+
+    .ending-text {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 20px;
+      font-style: italic;
+      color: #aaa;
+      margin-bottom: 20px;
+    }
+
+    #finalRetireBtn {
+      padding: 12px 25px;
+      background: transparent;
+      color: #ff4d4d;
+      border: 2px solid #ff4d4d;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    #finalRetireBtn:hover {
+      background: #ff4d4d;
+      color: white;
+      box-shadow: 0 0 15px rgba(255, 77, 77, 0.5);
+    }
+
+    .tier-label {
+      text-transform: uppercase;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: #aaa;
+    }
+
+    #nextTierInfo {
+        font-size: 11px;
+        color: #00ccff;
+        margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-content">
+    <h1>💰 UFC PAY SIMULATOR 💰</h1>
+    <div class="instruction">Punch the bag to earn!</div>
+    
+    <div id="fighter-container">
+      <img id="fighter" src="ufcbag.gif" alt="fighter">
+    </div>
+
+    <div class="box">
+      <span class="tier-label" id="tierName">AMATEUR TIER</span>
+      <p class="big" id="fighterPay">$0</p>
+      <div class="strike-val">Per Strike: <span id="payPerClick">$500</span></div>
+      
+      <div class="progress-container">
+          <div id="progressBar"></div>
+      </div>
+      <div id="nextTierInfo">Goal: $25,000</div>
+    </div>
+
+    <div class="box">
+      <p class="revenue">Event Revenue: $5,000,000</p>
+    </div>
+
+    <div id="message">Click the bag to start training...</div>
+    <button id="retireBtn" onclick="showEnding()">Rest</button>
+  </div>
+
+  <div id="endingOverlay">
+    <img id="endingImg" src="injured.png" alt="The damage is done">
+    <p class="ending-text">"I don't remember when it got this bad..."</p>
+    <button id="finalRetireBtn" onclick="resetGame()">Retire and Start Over?</button>
+  </div>
+
+  <script>
+    let fighterPay = 0;
+    let currentTierIndex = 0;
+    let payAmount = 500;
+
+    const tiers = [
+      { name: "Amateur", threshold: 0, bonus: 0 },
+      { name: "Prospect", threshold: 25000, bonus: 0 },
+      { name: "Main Card", threshold: 75000, bonus: 0 },
+      { name: "Ranked", threshold: 200000, bonus: 500 },
+      { name: "Top Contender", threshold: 500000, bonus: 1500 },
+      { name: "Champion", threshold: 1000000, bonus: 2500 }
+    ];
+
+    const fighterImg = document.getElementById("fighter");
+    const payDisplay = document.getElementById("fighterPay");
+    const tierDisplay = document.getElementById("tierName");
+    const message = document.getElementById("message");
+    const progressBar = document.getElementById("progressBar");
+    const nextTierInfo = document.getElementById("nextTierInfo");
+    const payPerClickDisplay = document.getElementById("payPerClick");
+    const retireBtn = document.getElementById("retireBtn");
+    const gameContent = document.getElementById("game-content");
+    const endingOverlay = document.getElementById("endingOverlay");
+
+    fighterImg.onclick = function() {
+      fighterPay += payAmount;
+      payDisplay.innerText = "$" + fighterPay.toLocaleString();
+
+      checkTierUpgrade();
+      updateProgressBar();
+      updateMessages();
+    };
+
+    function checkTierUpgrade() {
+      let nextTier = tiers[currentTierIndex + 1];
+      
+      if (nextTier && fighterPay >= nextTier.threshold) {
+        currentTierIndex++;
+        
+        payAmount += tiers[currentTierIndex].bonus;
+        payPerClickDisplay.innerText = "$" + payAmount.toLocaleString();
+        
+        tierDisplay.innerText = tiers[currentTierIndex].name.toUpperCase() + " TIER";
+        
+        if (tiers[currentTierIndex].name === "Champion") {
+            message.innerText = "You seem pretty beat up... I think you should rest.";
+            retireBtn.style.display = "inline-block";
+        } else {
+            message.innerText = "PROMOTED! You reached " + tiers[currentTierIndex].name + " status!";
+        }
+      }
+    }
+
+    function updateProgressBar() {
+      const currentTier = tiers[currentTierIndex];
+      const nextTier = tiers[currentTierIndex + 1];
+
+      if (nextTier) {
+        const range = nextTier.threshold - currentTier.threshold;
+        const earnedInRange = fighterPay - currentTier.threshold;
+        const percent = Math.min((earnedInRange / range) * 100, 100);
+        
+        progressBar.style.width = percent + "%";
+        nextTierInfo.innerText = "Goal: $" + nextTier.threshold.toLocaleString();
+      } else {
+        progressBar.style.width = "100%";
+        progressBar.style.background = "linear-gradient(90deg, #ffd700, #ff8c00)";
+        nextTierInfo.innerText = "🏆 MAX TIER REACHED 🏆";
+        nextTierInfo.style.color = "#ffd700";
+      }
+    }
+
+    function showEnding() {
+        gameContent.style.display = "none";
+        endingOverlay.style.display = "flex";
+    }
+
+    function resetGame() {
+        fighterPay = 0;
+        currentTierIndex = 0;
+        payAmount = 500;
+
+        payDisplay.innerText = "$0";
+        tierDisplay.innerText = "AMATEUR TIER";
+        payPerClickDisplay.innerText = "$500";
+        message.innerText = "Back to the gym. The grind starts again.";
+        
+        progressBar.style.width = "0%";
+        progressBar.style.background = "linear-gradient(90deg, #00ff88, #00ccff)";
+        nextTierInfo.innerText = "Goal: $25,000";
+        nextTierInfo.style.color = "#00ccff";
+
+        endingOverlay.style.display = "none";
+        gameContent.style.display = "block";
+        retireBtn.style.display = "none";
+    }
+
+    function updateMessages() {
+      if (fighterPay >= 5000 && fighterPay < 6000) {
+        message.innerText = "The coach says you're looking sharp!";
+      } else if (fighterPay >= 25000 && fighterPay < 27000) {
+        message.innerText = "The CEO says you're a 'real fighter'. (No raise though).";
+      }
+    }
+  </script>
+
+</body>
+</html>
